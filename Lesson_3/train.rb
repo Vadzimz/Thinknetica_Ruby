@@ -1,37 +1,50 @@
 class Train
-  attr_reader :id
-  attr_reader :type
-  attr_reader :car_num
-  attr_accessor :speed
-
-  attr_reader :curr_st
-  attr_reader :prev_st
-  attr_reader :next_st
+  attr_reader :id, :type, :route
+  attr_accessor :speed, :car_num, :st_ind
 
   def initialize(id, type, car_num)
     @id, @type, @car_num, @speed = id, type, car_num, 0
   end
 
   def set_route(route)
-    @@route = route.stations.unshift(nil).push(nil)
-    @@st_ind = 1
-    @prev_st, @curr_st, @next_st = @@route[@@st_ind - 1, 3]
-    puts "The route #{route} is added"
+    @route = route.stations
+    @st_ind = 0
+    curr_st.accept_train(self)
+  end
+
+  def stop_train
+    self.speed = 0
+  end
+
+  def accelerate_train(higher_speed)
+    self.speed = higher_speed if higher_speed > speed
   end
 
   def add_car
-    @speed == 0 ? @car_num += 1 : (puts "Adding a carriage is imposible")
+    self.car_num += 1 if speed == 0 
   end
 
   def remove_car
-    @speed == 0 && @car_num > 1 ? @car_num -= 1 : (puts "Removing a carriage is imposible")
+    self.car_num -= 1 if speed == 0 && car_num > 1
   end
     
   def move_forward
-    @next_station.nil? ? (puts "The train can't be moved forward") : (@@st_ind += 1; @prev_st, @curr_st, @next_st = @@route[@@st_ind - 1, 3])
+    (self.st_ind += 1; prev_st.send_train(self); curr_st.accept_train(self)) if next_st
   end
 
   def move_back
-    @previous_station.nil? ? (puts "The train can't be moved back") : (@@st_ind -= 1; @prev_st, @curr_st, @next_st = @@route[@@st_ind - 1, 3])
+    (self.st_ind -= 1; next_st.send_train(self); curr_st.accept_train(self)) if prev_st
+  end
+
+  def curr_st
+    route[st_ind]
+  end
+
+  def next_st
+    route[st_ind + 1]
+  end
+
+  def prev_st
+    route[st_ind - 1] if st_ind != 0
   end
 end
