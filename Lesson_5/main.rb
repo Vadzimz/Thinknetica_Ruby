@@ -41,9 +41,12 @@ class Railway
   protected
 
   def make_a_station
-    puts "Input the station name"
-    name = gets.chomp.capitalize
-    make_or_choose_station(name, "The station #{name} already exists")
+      puts "Input the station name"
+      name = gets.chomp.capitalize
+      make_or_choose_station(name, "The station #{name} already exists")
+      rescue => e
+      puts "#{e.message}"
+    #retry if not valid? Station.new(name)
   end
 
   def make_a_route

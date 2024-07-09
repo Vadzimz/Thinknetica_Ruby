@@ -41,9 +41,14 @@ class Railway
   protected
 
   def make_a_station
-    puts "Input the station name"
-    name = gets.chomp.capitalize
-    make_or_choose_station(name, "The station #{name} already exists")
+    begin
+      puts "Input the station name"
+      name = gets.chomp.capitalize
+      make_or_choose_station(name, "The station #{name} already exists")
+    rescue => e
+     puts "#{e.message}. Try again"
+    retry
+    end
   end
 
   def make_a_route
@@ -80,12 +85,16 @@ class Railway
   end
   
   def make_a_train
-    puts "Input ID of train"
-    id = gets.chomp
-    (puts "Correct the train's ID according to the specification"; id = gets.chomp) if not valid? id
-    i = choose(["passenger", "cargo"], "type of train")
-    self.trains << (i == 0 ? PassengerTrain.new(id) : CargoTrain.new(id))
-    puts "The train is created"
+    begin
+      puts "Input ID of train"
+      id = gets.chomp
+      i = choose(["passenger", "cargo"], "type of train")
+      self.trains << (i == 0 ? PassengerTrain.new(id) : CargoTrain.new(id))
+      puts "The train is created"
+    rescue => e
+      puts "#{e.message}. Try again"
+    retry
+    end
   end
 
   def assign_a_route_to_a_train
